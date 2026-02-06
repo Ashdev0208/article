@@ -1,24 +1,42 @@
 <script setup>
-import { ref,computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-const formDataBase = ref({ firstOne: ["text", "formName", "First Name"], SecondOne: ["email", "formEmail", "Email"], ThirdOne: ["password", "formPassword", "Password"]})
+import { reactive } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+
 const author = useAuthStore();
 
-function submitInfo() {
-    author.setLoading(true);
-}
 
+const form = reactive({
+  name: "",
+  email: '',
+  password: ''
+})
+
+
+const submitInfo = async () => {
+  await author.register({
+    username: form.name,
+    email: form.email,
+    password: form.password
+  })
+}
 </script>
+
 
 <template>
     <main class="form-signin w-25 m-auto text-center">
         <form>
-            <RouterLink class="mb-4" :to="{ name: 'home' }" alt="" width="72" height="57"><img src="@/assets/favicon.ico"
-                    alt=""></RouterLink>
+            <RouterLink class="mb-4" :to="{ name: 'home' }" alt="" width="72" height="57"><img
+                    src="@/assets/favicon.ico" alt=""></RouterLink>
             <h1 class="h3 mb-3 fw-normal">Please sing up</h1>
-            <Input v-for="(item, key) in formDataBase" :key="key" :type="item[0]" :id="item[1]" :label="item[2]" />
-            <Button @click.prevent type="sumbit" @click="submitInfo" :disabled="author.isLoading" >{{ author.isLoading }}</Button>
+                
+        <Input :type="'text'" :label="'Name please'" v-model="form.name" />
+        <Input :type="'email'" :label="'email'" v-model="form.email" />
+        <Input :type="'password'" :label="'passowrd please'" autocomplete="current-password" v-model="form.password"  />
+  <Button @click.prevent type="submit" @click="submitInfo" >
+    {{ author.isLoading ? 'Loading...' : 'Register' }}
+  </Button>
         </form>
+        <pre> {{ author.errors }} </pre>
     </main>
 </template>
 
