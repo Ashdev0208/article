@@ -1,9 +1,10 @@
 <script setup>
 import { reactive } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router';
 
 const author = useAuthStore();
-
+const router = useRouter();
 
 const form = reactive({
   name: "",
@@ -13,11 +14,16 @@ const form = reactive({
 
 
 const submitInfo = async () => {
+  
   await author.register({
     username: form.name,
     email: form.email,
     password: form.password
-  })
+  });
+   if (author.errors == null) {
+     router.push({ name: 'home' });
+  }
+ 
 }
 </script>
 

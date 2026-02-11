@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import authService from '@/services/auth' // ✅ THIS WAS MISSING
+import { setItem,getItem } from '@/helpers/persistance-storage'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -15,8 +16,8 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await authService.register(userData)
         this.user = response.data.user
-        console.log(response);
-        this.errors = null
+        this.errors = null;
+        setItem('token', this.user.token)
         return response
       } catch (err) {
         this.errors = err.response.data.detail.errors.body;
